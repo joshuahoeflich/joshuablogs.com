@@ -383,9 +383,35 @@ h6 {
 
 p {
   font-family: roboto;
-  line-height: 1.25em;
+  line-height: 1.35em;
 }
 /* }}}*/
+
+#about {
+  background-color: #dbc8ff;
+}
+
+#nav {
+  display: flex;
+  justify-content: center;
+}
+
+#nav > a {
+  text-decoration: none;
+  padding-left: 16px;
+  padding-right: 16px;
+  text-align: center;
+  font-family: roboto;
+}
+
+.toolbar > a {
+  text-decoration: inherit;
+}
+
+.page-link {
+  text-decoration: inherit;
+  color: inherit;
+}
 
 .page-container {
   display: flex;
@@ -396,12 +422,16 @@ p {
   width: 100%;
 }
 
+.page-container .card {
+  margin-bottom: 32px;
+}
+
 .card {
   max-width: 600px;
+  width: 90%;
   background-color: white;
   box-shadow: 3px 3px 10px;
   padding: 16px;
-  margin: 16px;
 }
 
 .card > h1 {
@@ -410,7 +440,21 @@ p {
   padding-bottom: 8px;
 }
 
+.card > h2 {
+  font-size: 22pt;
+  padding-bottom: 8px;
+}
+
 .card > p,
 a {
   font-size: 14pt;
+}
+
+#footer {
+  display: flex;
+}
+
+#footer > a {
+  padding: 4px;
+  font-size: 16pt;
 }
