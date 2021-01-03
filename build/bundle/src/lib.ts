@@ -28,28 +28,45 @@ const makeMarkdownExtractor = () => {
 
 export const extractMarkdownContents = makeMarkdownExtractor();
 
+export interface NavLink {
+  slug: string;
+  title: string;
+}
+
 export interface BlogMeta {
-  previous: string | null;
-  next: string | null;
+  previous: NavLink | null;
+  next: NavLink | null;
 }
 
 export type BlogContext = BlogMeta & MarkdownContent;
 
+export const getBlogSlug = (filePath: string): string =>
+  `/${path.parse(filePath.slice(filePath.indexOf("-") + 1)).name}`
+
+const getNavLink = (index: number, blogArray: MarkdownContent[], pathArray: string[]): null | NavLink => {
+  if (index >= blogArray.length || index < 0) return null;
+  return {
+    slug: getBlogSlug(path.parse(pathArray[index]).name),
+    title: blogArray[index].title,
+  }
+}
+
 export const getBlogContexts = async (
   blogPath: string
 ): Promise<Array<BlogContext>> => {
-  const blogPaths = await fs.promises.readdir(blogPath);
+  const blogPaths = (await fs.promises.readdir(blogPath)).map((postName) =>
+    path.resolve(path.join(blogPath, postName))
+  );
   const blogPosts = await Promise.all(
     blogPaths.map(async (el) => {
-      const absolutePath = path.resolve(path.join(blogPath, el));
-      const markdownContent = await fs.promises.readFile(absolutePath, "utf-8");
+      const markdownContent = await fs.promises.readFile(el, "utf-8");
       return extractMarkdownContents(markdownContent);
     })
   );
   return blogPosts.map((el, index) => ({
     ...el,
-    previous: blogPosts[index - 1]?.title || null,
-    next: blogPosts[index + 1]?.title || null,
+    previous: getNavLink(index - 1, blogPosts, blogPaths),
+    next: getNavLink(index + 1, blogPosts, blogPaths)
   }));
 };
 

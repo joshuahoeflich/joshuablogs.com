@@ -5,6 +5,7 @@ import {
   extractMarkdownContents,
   PROJECT_ROOT,
   BlogContext,
+  getBlogSlug,
 } from "./lib";
 
 describe("Project root", () => {
@@ -13,7 +14,12 @@ describe("Project root", () => {
   });
 });
 
-describe("Pure Markdown to HTML translation", () => {
+describe("Markdown to HTML translation", () => {
+  test("getBlogSlug can return the right slug from a file path", () => {
+    expect(getBlogSlug("000-file-path.md")).toEqual("/file-path");
+    expect(getBlogSlug("042-another-path.md")).toEqual("/another-path");
+    expect(getBlogSlug("242-hooray-long-path.md")).toEqual("/hooray-long-path");
+  });
   test("extractMarkdownContents maps markdown strings to a convenient form", () => {
     expect(
       extractMarkdownContents(`---
@@ -38,24 +44,35 @@ this is a markdown document
 
 describe("File system interactions", () => {
   let blogs: Array<BlogContext>;
+  let blogPaths: Array<string>;
   beforeAll(async () => {
-    // path.resolve(path.join(__dirname, '..', 'example-blog'));
-    const BIG_BLOG_TEST_DIR = path.resolve(path.join(__dirname, "big-blog"));
-    blogs = await getBlogContexts(BIG_BLOG_TEST_DIR);
+    const EXAMPLE_BLOG_TEST_DIR = path.resolve(
+      path.join(__dirname, "..", "example-blog")
+    );
+    blogs = await getBlogContexts(EXAMPLE_BLOG_TEST_DIR);
+    blogPaths = fs.readdirSync(EXAMPLE_BLOG_TEST_DIR);
   });
   test("We can find all the blogs in our mock project", async () => {
     expect(blogs.length).toEqual(1000);
   });
-  test("The next field in each blog is populated properly", () => {
-    expect(blogs[0].next).toBe('Awesome Blog 001');
-    expect(blogs[blogs.length - 1].next).toBe(null);
-    expect(blogs[42].next).toBe('Awesome Blog 043');
-    expect(blogs[543].next).toBe('Awesome Blog 544');
-  });
-  test("The previous field in each blog is populated properly", () => {
-    expect(blogs[0].previous).toBe(null);
-    expect(blogs[blogs.length - 1].previous).toBe('Awesome Blog 998');
-    expect(blogs[42].previous).toBe('Awesome Blog 041');
-    expect(blogs[543].previous).toBe('Awesome Blog 542');
+  test("Blogs have a correct previous and next", () => {
+    expect(blogs[0].previous).toEqual(null);
+    expect(blogs[0].next).toStrictEqual({
+      title: blogs[1].title,
+      slug: getBlogSlug(blogPaths[1]),
+    });
+    expect(blogs[999].next).toEqual(null);
+    expect(blogs[999].previous).toStrictEqual({
+      title: blogs[998].title,
+      slug: getBlogSlug(blogPaths[998]),
+    });
+    expect(blogs[234].next).toEqual({
+      title: blogs[235].title,
+      slug: getBlogSlug(blogPaths[235]),
+    });
+    expect(blogs[234].previous).toEqual({
+      title: blogs[233].title,
+      slug: getBlogSlug(blogPaths[233]),
+    });
   });
 });
