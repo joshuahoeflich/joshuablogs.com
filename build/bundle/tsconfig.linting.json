@@ -5,7 +5,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "typeRoots": ["types", "node_modules/@types"]
   },
   "include": ["src/**/*", ".eslintrc.js", "jest.config.js"],
   "exclude": ["node_modules"]

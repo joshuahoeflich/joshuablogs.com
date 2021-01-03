@@ -6,14 +6,26 @@ export const PROJECT_ROOT = path.resolve(
   path.join(__dirname, "..", "..", "..")
 );
 
-interface MarkdownMeta {
+export interface MarkdownContent {
   description: string;
   title: string;
+  content: string;
 }
 
-export const extractMetadata = (markdown: string): MarkdownMeta => {
+const makeMarkdownExtractor = () => {
   const md: any = new MarkdownIt();
   md.use(meta);
-  md.render(markdown);
-  return md.meta;
+  const extractMarkdownContents = (markdown: string): MarkdownContent => {
+    const content = md.render(markdown);
+    return {
+      ...md.meta,
+      content,
+    };
+  };
+  return extractMarkdownContents;
 };
+
+export const extractMarkdownContents = makeMarkdownExtractor();
+
+export const getBlogPosition = (fileName: string): number =>
+  Number.parseInt(fileName.split("_")[0], 10);

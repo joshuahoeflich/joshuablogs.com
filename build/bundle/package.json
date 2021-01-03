@@ -29,7 +29,9 @@
     "typescript": "^4.1.3"
   },
   "dependencies": {
+    "@types/fs-extra": "^9.0.6",
     "dompurify": "^2.2.6",
+    "fs-extra": "^9.0.1",
     "jsdom": "^16.4.0",
     "markdown-it": "^12.0.4",
     "markdown-it-meta": "0.0.1",
