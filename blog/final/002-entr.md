@@ -1,20 +1,11 @@
 ---
-title: Language Agnostic Test Watching with Python and Entr
+title: Language Agnostic Testing Automation with Entr
+description: How should one go about running tests while doing test-driven development? I like to have the tests automatically refresh in a terminal in the background while I edit the production and test files. Some test runners support this workflow out of the box, but others don't, so I came up with a language and tool agnostic way of achieving it. If you can run the tests of your project by typing a command into your shell, this strategy should work for you.
 ---
 
 # Language Agnostic Testing Automation with Entr
 
-How should one go about running tests while doing test-driven development? Here's the workflow I prefer:
-
-1. I open up a completely terminal empty terminal and `cd` into the root of the project.
-
-2. I type a command in my shell, `run-tests`, which displays the output of every test I've written so far in the terminal.
-
-3. I open up my text editor (Neovim for TypeScript projects that need JSX and Emacs for everything else) and start to program.
-
-4. Whenever I save a file containing production code or tests, the terminal in which I'm running `run-tests` refreshes and shows me the current number of successes and failures.
-
-Some test runners, like [Jest](https://jestjs.io/), support this workflow out of the box. Other test runners do not, which inspired me to come up with a language and tool agnostic way of achieving it. If you can run the tests in your project by typing a command into your shell, the strategy below should work for you.
+How should one go about running tests while doing test-driven development? I like to have the tests automatically refresh in a terminal in the background while I edit the production and test files. Some test runners support this workflow out of the box, but others don't, so I came up with a language and tool agnostic way of achieving it. If you can run the tests of your project by typing a command into your shell, this strategy should work for you.
 
 One small program does most of the heavy lifting: [entr](http://eradman.com/entrproject/). If you pipe a list of files for `entr` to watch and provide it an arbitrary shell command to run, `entr` will happily run the command you give it whenever any of the files change. For example, running:
 
@@ -38,6 +29,6 @@ Any scripting language will work, here; the key idea is to move all the file-fin
 list-important-files | entr -c -d -r run-tests
 ```
 
-Where `run-tests` is some command that runs the tests for your project and `list-important-files` is a script written with the tool of your choice that prints out all of the files relevant to your project.
+Where `run-tests` is some command that runs the tests for your project and `list-important-files` is a script saved somewhere on your $PATH that prints out all of the files relevant to your project.
 
 That's all! Happy testing!
