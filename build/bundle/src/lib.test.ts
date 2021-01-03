@@ -1,6 +1,11 @@
 import fs from "fs";
-import path from 'path';
-import { getBlogPosition, extractMarkdownContents, PROJECT_ROOT } from "./lib";
+import path from "path";
+import {
+  getBlogContexts,
+  extractMarkdownContents,
+  PROJECT_ROOT,
+  BlogContext,
+} from "./lib";
 
 describe("Project root", () => {
   test("Points to the right directory", () => {
@@ -29,17 +34,27 @@ this is a markdown document
 <p>this is a markdown document</p>\n`,
     });
   });
-  test("We can get the position of a blog post from its file name", () => {
-    expect(getBlogPosition("005_test.md")).toBe(5);
-    expect(getBlogPosition("015_potato.md")).toBe(15);
-    expect(getBlogPosition("315_test_test_test.md")).toBe(315);
-    expect(getBlogPosition("42015_test.md")).toBe(42015);
-    expect(getBlogPosition("00042015_test.md")).toBe(42015);
-  });
 });
 
 describe("File system interactions", () => {
-  test("We can get a correct array of absolute file names", () => {
-    // const BIG_BLOG_TEST_DIR = path.resolve(path.join(__dirname, 'big-blog'));
+  let blogs: Array<BlogContext>;
+  beforeAll(async () => {
+    const BIG_BLOG_TEST_DIR = path.resolve(path.join(__dirname, "big-blog"));
+    blogs = await getBlogContexts(BIG_BLOG_TEST_DIR);
+  });
+  test("We can find all the blogs in our mock project", async () => {
+    expect(blogs.length).toEqual(1000);
+  });
+  test("The next field in each blog is populated properly", () => {
+    expect(blogs[0].next).toBe('Awesome Blog 001');
+    expect(blogs[blogs.length - 1].next).toBe(null);
+    expect(blogs[42].next).toBe('Awesome Blog 043');
+    expect(blogs[543].next).toBe('Awesome Blog 544');
+  });
+  test("The previous field in each blog is populated properly", () => {
+    expect(blogs[0].previous).toBe(null);
+    expect(blogs[blogs.length - 1].previous).toBe('Awesome Blog 998');
+    expect(blogs[42].previous).toBe('Awesome Blog 041');
+    expect(blogs[543].previous).toBe('Awesome Blog 542');
   });
 });
