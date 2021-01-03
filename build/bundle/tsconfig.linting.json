@@ -8,6 +8,11 @@
     "noFallthroughCasesInSwitch": true,
     "typeRoots": ["types", "node_modules/@types"]
   },
-  "include": ["src/**/*", ".eslintrc.js", "jest.config.js"],
+  "include": [
+    "src/**/*",
+    ".eslintrc.js",
+    "jest.config.js",
+    "create-fake-blog.ts"
+  ],
   "exclude": ["node_modules"]
 }

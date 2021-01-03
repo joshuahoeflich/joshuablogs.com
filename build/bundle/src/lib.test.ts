@@ -39,6 +39,7 @@ this is a markdown document
 describe("File system interactions", () => {
   let blogs: Array<BlogContext>;
   beforeAll(async () => {
+    // path.resolve(path.join(__dirname, '..', 'example-blog'));
     const BIG_BLOG_TEST_DIR = path.resolve(path.join(__dirname, "big-blog"));
     blogs = await getBlogContexts(BIG_BLOG_TEST_DIR);
   });

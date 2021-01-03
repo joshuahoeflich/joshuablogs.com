@@ -114,3 +114,7 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Testing files for our blog generator
+build/bundle/src/big-blog
+build/bundle/example-blog

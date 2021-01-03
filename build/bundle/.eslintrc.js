@@ -16,5 +16,6 @@ module.exports = {
   },
   rules: {
     "arrow-body-style": 0,
+    "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
   },
 };
