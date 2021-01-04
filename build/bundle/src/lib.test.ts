@@ -23,6 +23,7 @@ describe("Rendering the footer", () => {
         title: "",
         content: "",
         previous: null,
+        slug: '',
         next: { title: "Hello!", slug: "/hello" },
       })
     ).toEqual('<a href="/">🏠 Home</a><a href="/hello">👉 Hello!</a>');
@@ -33,6 +34,7 @@ describe("Rendering the footer", () => {
         description: "",
         title: "",
         content: "",
+        slug: '',
         previous: { title: "Goodbye!", slug: "/goodbye"   },
         next: null,
       })
@@ -44,6 +46,7 @@ describe("Rendering the footer", () => {
         description: "",
         title: "",
         content: "",
+        slug: '',
         previous: { title: "Goodbye!", slug: "/goodbye"   },
         next: { title: "Hello!", slug: "/hello" },
       })
@@ -53,9 +56,9 @@ describe("Rendering the footer", () => {
 
 describe("Markdown to HTML translation", () => {
   test("getBlogSlug can return the right slug from a file path", () => {
-    expect(getBlogSlug("000-file-path.md")).toEqual("/file-path");
-    expect(getBlogSlug("042-another-path.md")).toEqual("/another-path");
-    expect(getBlogSlug("242-hooray-long-path.md")).toEqual("/hooray-long-path");
+    expect(getBlogSlug("/000-file-path.md")).toEqual("/file-path");
+    expect(getBlogSlug("/042-another-path.md")).toEqual("/another-path");
+    expect(getBlogSlug("/242-hooray-long-path.md")).toEqual("/hooray-long-path");
   });
   test("extractMarkdownContents maps markdown strings to a convenient form", () => {
     expect(
@@ -84,7 +87,7 @@ describe("File system interactions", () => {
   let blogPaths: Array<string>;
   beforeAll(async () => {
     const EXAMPLE_BLOG_TEST_DIR = path.resolve(
-      path.join(__dirname, "..", "example-blog")
+      path.join(__dirname, "..", "integration","example-blog")
     );
     blogs = await getBlogContexts(EXAMPLE_BLOG_TEST_DIR);
     blogPaths = fs.readdirSync(EXAMPLE_BLOG_TEST_DIR);

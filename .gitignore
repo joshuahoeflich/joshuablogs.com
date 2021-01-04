@@ -116,8 +116,8 @@ dist
 .pnp.*
 
 # Testing files for our blog generator
-build/bundle/src/big-blog
-build/bundle/example-blog
+build/bundle/integration/example-blog
+build/bundle/integration/example-html
 
 # Watch mode tools
 .wrc

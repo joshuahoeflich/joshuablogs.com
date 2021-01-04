@@ -1,4 +1,4 @@
-import fs from "fs-extra";
+import fs, { mkdirp, remove } from "fs-extra";
 import path from "path";
 import MarkdownIt from "markdown-it";
 import meta from "markdown-it-meta";
@@ -17,6 +17,12 @@ export interface NavLink {
 export interface BlogMeta {
   previous: NavLink | null;
   next: NavLink | null;
+  slug: string;
+}
+
+export interface HtmlOutput {
+  blogPath: string;
+  htmlPath: string;
 }
 
 export type BlogContext = BlogMeta & MarkdownContent;
@@ -34,8 +40,10 @@ export const extractMarkdownContents = (markdown: string): MarkdownContent => {
   };
 };
 
-export const getBlogSlug = (filePath: string): string =>
-  `/${path.parse(filePath.slice(filePath.indexOf("-") + 1)).name}`;
+export const getBlogSlug = (filePath: string): string => {
+  const baseName = path.parse(filePath).name;
+  return `/${baseName.slice(baseName.indexOf("-") + 1)}`
+}
 
 const indexInBounds = <T>(index: number, array: Array<T>): boolean =>
   index >= 0 && index < array.length;
@@ -43,11 +51,11 @@ const indexInBounds = <T>(index: number, array: Array<T>): boolean =>
 const getNavLink = (
   index: number,
   blogArray: MarkdownContent[],
-  pathArray: string[]
+  slugArray: string[]
 ): null | NavLink =>
   indexInBounds(index, blogArray)
     ? {
-        slug: getBlogSlug(path.parse(pathArray[index]).name),
+        slug: slugArray[index],
         title: blogArray[index].title,
       }
     : null;
@@ -58,6 +66,7 @@ export const getBlogContexts = async (
   const blogPaths = (await fs.promises.readdir(blogPath)).map((postName) =>
     path.resolve(path.join(blogPath, postName))
   );
+  const blogSlugs = blogPaths.map(getBlogSlug);
   const blogPosts = await Promise.all(
     blogPaths.map(async (el) => {
       const markdownContent = await fs.promises.readFile(el, "utf-8");
@@ -66,8 +75,9 @@ export const getBlogContexts = async (
   );
   return blogPosts.map((el, index) => ({
     ...el,
-    previous: getNavLink(index - 1, blogPosts, blogPaths),
-    next: getNavLink(index + 1, blogPosts, blogPaths),
+    previous: getNavLink(index - 1, blogPosts, blogSlugs),
+    next: getNavLink(index + 1, blogPosts, blogSlugs),
+    slug: blogSlugs[index],
   }));
 };
 
@@ -76,7 +86,7 @@ export const getNavFooter = (blogContext: BlogContext): string => {
     ? `<a href="${blogContext.previous.slug}">👈 ${blogContext.previous.title}</a>`
     : "";
   const next = blogContext.next
-    ? `<a href="${blogContext.next.slug}">👉 ${blogContext.next.title}</a>` 
+    ? `<a href="${blogContext.next.slug}">👉 ${blogContext.next.title}</a>`
     : "";
   return `${previous}<a href="/">🏠 Home</a>${next}`;
 };
@@ -117,10 +127,17 @@ export const renderBlog = (blogContext: BlogContext): string => {
   </body>
 </html>
   `;
-}
+};
 
-export const writeBlogHtml = async (blogPath: string): Promise<void> => {
-  const blogContexts = await getBlogContexts(blogPath);
-  blogContexts.map(renderBlog);
-  console.log(blogContexts);
-}
+export const writeBlogHtml = async (htmlOutput: HtmlOutput): Promise<void> => {
+  const [blogContexts] = await Promise.all([
+    getBlogContexts(htmlOutput.blogPath),
+    remove(htmlOutput.htmlPath),
+  ]);
+  const outputStrings = blogContexts.map(renderBlog);
+  await Promise.all(blogContexts.map(async (ctx, index) => {
+    const outDir = path.resolve(path.join(htmlOutput.htmlPath, ctx.slug)) 
+    await mkdirp(outDir);
+    await fs.writeFile(path.join(outDir, 'index.html'), outputStrings[index]);
+  }));
+};

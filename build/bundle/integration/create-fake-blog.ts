@@ -11,7 +11,7 @@ const FAKE_BLOG_PATH = path.join(__dirname, "example-blog");
 const createFakeMarkdown = (): string => {
   const title = faker.name.title();
   const description = faker.lorem.paragraph(5);
-  const body = `${description} ${faker.lorem.paragraphs(10, "\n")}`;
+  const body = `${description}\n\n${faker.lorem.paragraphs(10, "\n\n")}`;
   return `---
 title: ${title}
 description: ${description}
