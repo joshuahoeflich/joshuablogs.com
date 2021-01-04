@@ -71,11 +71,6 @@ export const extractMarkdownContents = (markdown: string): MarkdownContent => {
   };
 };
 
-export const getBlogSlug = (filePath: string): string => {
-  const baseName = path.parse(filePath).name;
-  return `/${baseName.slice(baseName.indexOf("-") + 1)}`;
-};
-
 export const renderPostFooter = (blogContext: BlogContext): string => {
   const previous = blogContext.previous
     ? `<a href="${blogContext.previous.slug}">👈 ${blogContext.previous.title}</a>`
@@ -190,12 +185,18 @@ const getNavLink = (
       }
     : null;
 
+
+export const getBlogSlug = (filePath: string): string => {
+  const baseName = path.parse(filePath).name;
+  return `/${baseName.slice(baseName.indexOf("-") + 1)}`;
+};
+
 export const getBlogContexts = async (
   blogPath: string
 ): Promise<Array<BlogContext>> => {
   const blogPaths = (await fs.promises.readdir(blogPath)).map((postName) =>
     path.resolve(path.join(blogPath, postName))
-  );
+  ).reverse();
   const blogSlugs = blogPaths.map(getBlogSlug);
   const blogPosts = await Promise.all(
     blogPaths.map(async (el) => {

@@ -190,20 +190,20 @@ describe("File system interactions", () => {
     expect(blogs[0].previous).toEqual(null);
     expect(blogs[0].next).toStrictEqual({
       title: blogs[1].title,
-      slug: getBlogSlug(blogPaths[1]),
+      slug: getBlogSlug(blogPaths[999 - 1]),
     });
     expect(blogs[999].next).toEqual(null);
     expect(blogs[999].previous).toStrictEqual({
       title: blogs[998].title,
-      slug: getBlogSlug(blogPaths[998]),
+      slug: getBlogSlug(blogPaths[999 - 998]),
     });
     expect(blogs[234].next).toEqual({
       title: blogs[235].title,
-      slug: getBlogSlug(blogPaths[235]),
+      slug: getBlogSlug(blogPaths[999 - 235]),
     });
     expect(blogs[234].previous).toEqual({
       title: blogs[233].title,
-      slug: getBlogSlug(blogPaths[233]),
+      slug: getBlogSlug(blogPaths[999 - 233]),
     });
   });
 });
