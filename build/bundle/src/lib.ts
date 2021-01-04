@@ -3,16 +3,11 @@ import path from "path";
 import MarkdownIt from "markdown-it";
 import meta from "markdown-it-meta";
 
-export interface MarkdownDescription {
+export interface MarkdownContent {
   title: string;
   description: string;
-}
-
-export interface MarkdownHtml {
   content: string;
 }
-
-export type MarkdownContent = MarkdownDescription & MarkdownHtml;
 
 export interface NavLink {
   slug: string;
@@ -27,9 +22,16 @@ export interface BlogMeta {
 
 export type BlogContext = BlogMeta & MarkdownContent;
 
+export interface BlogIndex {
+  title: string;
+  description: string;
+  slug: string;
+}
+
 export interface IndexContext {
   pageNumber: number;
-  blogs: Array<MarkdownDescription>;
+  blogs: Array<BlogIndex>;
+  numPages: number;
 }
 
 export interface HtmlOutput {
@@ -46,6 +48,9 @@ export const PROJECT_ROOT = path.resolve(
   path.join(__dirname, "..", "..", "..")
 );
 
+const indexInBounds = <T>(index: number, array: Array<T>): boolean =>
+  index >= 0 && index < array.length;
+
 export const extractMarkdownContents = (markdown: string): MarkdownContent => {
   const md: any = new MarkdownIt().use(meta);
   const content = md.render(markdown);
@@ -60,8 +65,105 @@ export const getBlogSlug = (filePath: string): string => {
   return `/${baseName.slice(baseName.indexOf("-") + 1)}`;
 };
 
-const indexInBounds = <T>(index: number, array: Array<T>): boolean =>
-  index >= 0 && index < array.length;
+export const renderPostFooter = (blogContext: BlogContext): string => {
+  const previous = blogContext.previous
+    ? `<a href="${blogContext.previous.slug}">👈 ${blogContext.previous.title}</a>`
+    : "";
+  const next = blogContext.next
+    ? `<a href="${blogContext.next.slug}">👉 ${blogContext.next.title}</a>`
+    : "";
+  return `${previous}<a href="/">🏠 Home</a>${next}`;
+};
+
+export const renderBlogPost = (blogContext: BlogContext): string => {
+  return `
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="Joshua Hoeflich's blog." />
+    <link
+      rel="preload"
+      crossorigin="anonymous"
+      href="/styles/roboto.woff"
+      as="font"
+    />
+    <link
+      rel="preload"
+      crossorigin="anonymous"
+      href="/styles/roboto-slab.woff"
+      as="font"
+    />
+    <link rel="preload" href="/styles/style.css" as="style" />
+    <title>Joshua Blogs | ${blogContext.title}</title>
+    <link rel="stylesheet" href="/styles/style.css" />
+  </head>
+  <body>
+    <div class="page-container">
+      <div class="card" id="blog-post">
+        ${blogContext.content}
+      </div>
+      <div id="nav" class="card">
+        ${renderPostFooter(blogContext)}
+      </div>
+    </div>
+  </body>
+</html>
+  `;
+};
+
+export const renderBlogCard = (blog: BlogIndex, index: number): string => `
+<div class="card">
+  <a class="page-link" href="${blog.slug}">
+    ${index === 0 ? `<h1>${blog.title}</h1>` : `<h2>${blog.title}</h2>`}
+    <p>${blog.description}</p>
+  </a>
+</div>`;
+
+export const renderIndexFooter = (ctx: IndexContext): string => {
+  const { pageNumber, numPages } = ctx;
+  const previous =
+    pageNumber > 1
+      ? `<a href="/${pageNumber - 1 > 1 ? pageNumber - 1 : ""}">👈 Previous</a>`
+      : "";
+  const next =
+    pageNumber < numPages ? `<a href="/${pageNumber + 1}">👉 Next</a>` : "";
+  return `${previous}<a href="/about">🐛 About</a><a href="/apps">🎈 Apps</a>${next}`;
+};
+
+export const renderBlogIndex = (ctx: IndexContext): string => {
+  return `
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="Joshua Hoeflich's blog." />
+    <link
+      rel="preload"
+      crossorigin="anonymous"
+      href="/styles/roboto.woff"
+      as="font"
+    />
+    <link
+      rel="preload"
+      crossorigin="anonymous"
+      href="/styles/roboto-slab.woff"
+      as="font"
+    />
+    <link rel="preload" href="/styles/style.css" as="style" />
+    <title>Joshua Blogs</title>
+    <link rel="stylesheet" href="/styles/style.css" />
+  </head>
+  <body>
+    <div class="page-container">
+      ${ctx.blogs.map(renderBlogCard).join("\n")}
+      ${renderIndexFooter(ctx)}
+    </div>
+  </body>
+  `;
+};
 
 const getNavLink = (
   index: number,
@@ -96,81 +198,61 @@ export const getBlogContexts = async (
   }));
 };
 
-export const getNavFooter = (blogContext: BlogContext): string => {
-  const previous = blogContext.previous
-    ? `<a href="${blogContext.previous.slug}">👈 ${blogContext.previous.title}</a>`
-    : "";
-  const next = blogContext.next
-    ? `<a href="${blogContext.next.slug}">👉 ${blogContext.next.title}</a>`
-    : "";
-  return `${previous}<a href="/">🏠 Home</a>${next}`;
-};
-
-export const renderBlog = (blogContext: BlogContext): string => {
-  return `
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="description" content="Joshua Hoeflich's blog." />
-    <link
-      rel="preload"
-      crossorigin="anonymous"
-      href="/styles/roboto.woff"
-      as="font"
-    />
-    <link
-      rel="preload"
-      crossorigin="anonymous"
-      href="/styles/roboto-slab.woff"
-      as="font"
-    />
-    <link rel="preload" href="/styles/style.css" as="style" />
-    <title>Joshua Blogs | ${blogContext.title}</title>
-    <link rel="stylesheet" href="/styles/style.css" />
-  </head>
-  <body>
-    <div class="page-container">
-      <div class="card" id="blog-post">
-        ${blogContext.content}
-      </div>
-      <div id="nav" class="card">
-        ${getNavFooter(blogContext)}
-      </div>
-    </div>
-  </body>
-</html>
-  `;
-};
-
-export const writeBlogHtml = async (htmlOutput: HtmlOutput): Promise<void> => {
-  const [blogContexts] = await Promise.all([
-    getBlogContexts(htmlOutput.blogPath),
-    remove(htmlOutput.htmlPath),
-  ]);
-  const outputStrings = blogContexts.map(renderBlog);
-  await Promise.all(
-    blogContexts.map(async (ctx, index) => {
-      const outDir = path.resolve(path.join(htmlOutput.htmlPath, ctx.slug));
-      await mkdirp(outDir);
-      await fs.writeFile(path.join(outDir, "index.html"), outputStrings[index]);
-    })
-  );
-};
-
 export const indexBlogs = (config: BlogIndexConfig): Array<IndexContext> => {
-  const { blogsPerPage } = config;
+  const { blogs, blogsPerPage } = config;
+  const numPages = blogs.length;
   return Array.from({ length: blogsPerPage })
     .map((_, i) => {
       const start = i * blogsPerPage;
-      return config.blogs.slice(start, start + blogsPerPage);
+      return blogs.slice(start, start + blogsPerPage);
     })
-    .map((blogs, index) => ({
+    .map((contexts, index) => ({
       pageNumber: index + 1,
-      blogs: blogs.map((blog) => ({
+      numPages,
+      blogs: contexts.map((blog) => ({
         title: blog.title,
         description: blog.description,
+        slug: blog.slug,
       })),
     }));
+};
+
+export const writeBlogPosts = (
+  htmlPath: string,
+  blogContexts: BlogContext[]
+): Promise<void>[] => {
+  return blogContexts.map(async (ctx) => {
+    const outDir = path.resolve(path.join(htmlPath, ctx.slug));
+    await mkdirp(outDir);
+    await fs.writeFile(path.join(outDir, "index.html"), renderBlogPost(ctx));
+  });
+};
+
+export const writeBlogIndexes = (
+  htmlPath: string,
+  blogContexts: BlogContext[]
+): Promise<void>[] => {
+  const indexes = indexBlogs({ blogs: blogContexts, blogsPerPage: 10 });
+  return indexes.map(async (blogIndex) => {
+    const outDir = path.resolve(
+      path.join(
+        htmlPath,
+        blogIndex.pageNumber > 1 ? `${blogIndex.pageNumber}` : ""
+      )
+    );
+    await mkdirp(outDir);
+    await fs.writeFile(
+      path.join(outDir, "index.html"),
+      renderBlogIndex(blogIndex)
+    );
+  });
+};
+
+export const writeBlogHtml = async (htmlOutput: HtmlOutput): Promise<void> => {
+  await remove(htmlOutput.htmlPath);
+  const blogContexts = await getBlogContexts(htmlOutput.blogPath);
+  await Promise.all([
+    ...writeBlogPosts(htmlOutput.htmlPath, blogContexts),
+    ...writeBlogIndexes(htmlOutput.htmlPath, blogContexts),
+  ]);
 };

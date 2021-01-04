@@ -6,8 +6,10 @@ import {
   PROJECT_ROOT,
   BlogContext,
   getBlogSlug,
-  getNavFooter,
+  renderPostFooter,
+  renderBlogCard,
   indexBlogs,
+  renderIndexFooter,
 } from "./lib";
 
 let blogs: Array<BlogContext>;
@@ -30,7 +32,7 @@ describe("Project root", () => {
 describe("Rendering the footer", () => {
   test("Works when no previous", () => {
     expect(
-      getNavFooter({
+      renderPostFooter({
         description: "",
         title: "",
         content: "",
@@ -42,7 +44,7 @@ describe("Rendering the footer", () => {
   });
   test("Works when no next", () => {
     expect(
-      getNavFooter({
+      renderPostFooter({
         description: "",
         title: "",
         content: "",
@@ -54,7 +56,7 @@ describe("Rendering the footer", () => {
   });
   test("Works when previous and next both exist", () => {
     expect(
-      getNavFooter({
+      renderPostFooter({
         description: "",
         title: "",
         content: "",
@@ -107,7 +109,75 @@ describe("Indexing pages", () => {
       indexBlogs({ blogs, blogsPerPage: 10 }).map((el) => el.pageNumber)
     ).toStrictEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
   });
-  test("Can render the correct footer for each index", () => {});
+  test("Renders the first blog card correctly", () => {
+    expect(
+      renderBlogCard(
+        {
+          description: "description",
+          title: "test",
+          slug: "/this-is-a-slug",
+        },
+        0
+      )
+    ).toEqual(`
+<div class="card">
+  <a class="page-link" href="/this-is-a-slug">
+    <h1>test</h1>
+    <p>description</p>
+  </a>
+</div>`);
+  });
+  test("Renders the other blog cards correctly", () => {
+    expect(
+      renderBlogCard(
+        {
+          description: "description",
+          title: "test",
+          slug: "/this-is-a-slug",
+        },
+        3
+      )
+    ).toEqual(`
+<div class="card">
+  <a class="page-link" href="/this-is-a-slug">
+    <h2>test</h2>
+    <p>description</p>
+  </a>
+</div>`);
+  });
+  test("Renders the first footer correctly", () => {
+    expect(
+      renderIndexFooter({ blogs: [], pageNumber: 1, numPages: 10 })
+    ).toEqual(
+      `<a href="/about">🐛 About</a><a href="/apps">🎈 Apps</a><a href="/2">👉 Next</a>`
+    );
+  });
+  test("Renders the second footer correctly", () => {
+    expect(
+      renderIndexFooter({ blogs: [], pageNumber: 2, numPages: 10 })
+    ).toEqual(
+      `<a href="/">👈 Previous</a><a href="/about">🐛 About</a><a href="/apps">🎈 Apps</a><a href="/3">👉 Next</a>`
+    );
+  });
+  test("Renders the last footer correctly", () => {
+    expect(
+      renderIndexFooter({ blogs: [], pageNumber: 10, numPages: 10 })
+    ).toEqual(
+      `<a href="/9">👈 Previous</a><a href="/about">🐛 About</a><a href="/apps">🎈 Apps</a>`
+    );
+  });
+  test("Renders in between footers correctly", () => {
+    expect(
+      renderIndexFooter({ blogs: [], pageNumber: 5, numPages: 10 })
+    ).toEqual(
+      `<a href="/4">👈 Previous</a><a href="/about">🐛 About</a><a href="/apps">🎈 Apps</a><a href="/6">👉 Next</a>`
+    );
+  });
+  test("Handles the case where there is only one page correctly", () => {
+    expect(
+      renderIndexFooter({ blogs: [], pageNumber: 1, numPages: 1 })
+    ).toEqual(`<a href="/about">🐛 About</a><a href="/apps">🎈 Apps</a>`);
+  });
 });
 
 describe("File system interactions", () => {
