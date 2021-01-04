@@ -3,11 +3,16 @@ import path from "path";
 import MarkdownIt from "markdown-it";
 import meta from "markdown-it-meta";
 
-export interface MarkdownContent {
-  description: string;
+export interface MarkdownDescription {
   title: string;
+  description: string;
+}
+
+export interface MarkdownHtml {
   content: string;
 }
+
+export type MarkdownContent = MarkdownDescription & MarkdownHtml;
 
 export interface NavLink {
   slug: string;
@@ -20,12 +25,22 @@ export interface BlogMeta {
   slug: string;
 }
 
+export type BlogContext = BlogMeta & MarkdownContent;
+
+export interface IndexContext {
+  pageNumber: number;
+  blogs: Array<MarkdownDescription>;
+}
+
 export interface HtmlOutput {
   blogPath: string;
   htmlPath: string;
 }
 
-export type BlogContext = BlogMeta & MarkdownContent;
+export interface BlogIndexConfig {
+  blogsPerPage: number;
+  blogs: Array<BlogContext>;
+}
 
 export const PROJECT_ROOT = path.resolve(
   path.join(__dirname, "..", "..", "..")
@@ -42,8 +57,8 @@ export const extractMarkdownContents = (markdown: string): MarkdownContent => {
 
 export const getBlogSlug = (filePath: string): string => {
   const baseName = path.parse(filePath).name;
-  return `/${baseName.slice(baseName.indexOf("-") + 1)}`
-}
+  return `/${baseName.slice(baseName.indexOf("-") + 1)}`;
+};
 
 const indexInBounds = <T>(index: number, array: Array<T>): boolean =>
   index >= 0 && index < array.length;
@@ -135,9 +150,27 @@ export const writeBlogHtml = async (htmlOutput: HtmlOutput): Promise<void> => {
     remove(htmlOutput.htmlPath),
   ]);
   const outputStrings = blogContexts.map(renderBlog);
-  await Promise.all(blogContexts.map(async (ctx, index) => {
-    const outDir = path.resolve(path.join(htmlOutput.htmlPath, ctx.slug)) 
-    await mkdirp(outDir);
-    await fs.writeFile(path.join(outDir, 'index.html'), outputStrings[index]);
-  }));
+  await Promise.all(
+    blogContexts.map(async (ctx, index) => {
+      const outDir = path.resolve(path.join(htmlOutput.htmlPath, ctx.slug));
+      await mkdirp(outDir);
+      await fs.writeFile(path.join(outDir, "index.html"), outputStrings[index]);
+    })
+  );
+};
+
+export const indexBlogs = (config: BlogIndexConfig): Array<IndexContext> => {
+  const { blogsPerPage } = config;
+  return Array.from({ length: blogsPerPage })
+    .map((_, i) => {
+      const start = i * blogsPerPage;
+      return config.blogs.slice(start, start + blogsPerPage);
+    })
+    .map((blogs, index) => ({
+      pageNumber: index + 1,
+      blogs: blogs.map((blog) => ({
+        title: blog.title,
+        description: blog.description,
+      })),
+    }));
 };

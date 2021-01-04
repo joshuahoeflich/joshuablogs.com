@@ -7,7 +7,19 @@ import {
   BlogContext,
   getBlogSlug,
   getNavFooter,
+  indexBlogs,
 } from "./lib";
+
+let blogs: Array<BlogContext>;
+let blogPaths: Array<string>;
+
+beforeAll(async () => {
+  const EXAMPLE_BLOG_TEST_DIR = path.resolve(
+    path.join(__dirname, "..", "integration", "example-blog")
+  );
+  blogs = await getBlogContexts(EXAMPLE_BLOG_TEST_DIR);
+  blogPaths = fs.readdirSync(EXAMPLE_BLOG_TEST_DIR);
+});
 
 describe("Project root", () => {
   test("Points to the right directory", () => {
@@ -23,7 +35,7 @@ describe("Rendering the footer", () => {
         title: "",
         content: "",
         previous: null,
-        slug: '',
+        slug: "",
         next: { title: "Hello!", slug: "/hello" },
       })
     ).toEqual('<a href="/">🏠 Home</a><a href="/hello">👉 Hello!</a>');
@@ -34,8 +46,8 @@ describe("Rendering the footer", () => {
         description: "",
         title: "",
         content: "",
-        slug: '',
-        previous: { title: "Goodbye!", slug: "/goodbye"   },
+        slug: "",
+        previous: { title: "Goodbye!", slug: "/goodbye" },
         next: null,
       })
     ).toEqual('<a href="/goodbye">👈 Goodbye!</a><a href="/">🏠 Home</a>');
@@ -46,11 +58,13 @@ describe("Rendering the footer", () => {
         description: "",
         title: "",
         content: "",
-        slug: '',
-        previous: { title: "Goodbye!", slug: "/goodbye"   },
+        slug: "",
+        previous: { title: "Goodbye!", slug: "/goodbye" },
         next: { title: "Hello!", slug: "/hello" },
       })
-    ).toEqual('<a href="/goodbye">👈 Goodbye!</a><a href="/">🏠 Home</a><a href="/hello">👉 Hello!</a>');
+    ).toEqual(
+      '<a href="/goodbye">👈 Goodbye!</a><a href="/">🏠 Home</a><a href="/hello">👉 Hello!</a>'
+    );
   });
 });
 
@@ -58,7 +72,9 @@ describe("Markdown to HTML translation", () => {
   test("getBlogSlug can return the right slug from a file path", () => {
     expect(getBlogSlug("/000-file-path.md")).toEqual("/file-path");
     expect(getBlogSlug("/042-another-path.md")).toEqual("/another-path");
-    expect(getBlogSlug("/242-hooray-long-path.md")).toEqual("/hooray-long-path");
+    expect(getBlogSlug("/242-hooray-long-path.md")).toEqual(
+      "/hooray-long-path"
+    );
   });
   test("extractMarkdownContents maps markdown strings to a convenient form", () => {
     expect(
@@ -82,16 +98,19 @@ this is a markdown document
   });
 });
 
-describe("File system interactions", () => {
-  let blogs: Array<BlogContext>;
-  let blogPaths: Array<string>;
-  beforeAll(async () => {
-    const EXAMPLE_BLOG_TEST_DIR = path.resolve(
-      path.join(__dirname, "..", "integration","example-blog")
-    );
-    blogs = await getBlogContexts(EXAMPLE_BLOG_TEST_DIR);
-    blogPaths = fs.readdirSync(EXAMPLE_BLOG_TEST_DIR);
+describe("Indexing pages", () => {
+  test("Can get an array of the right pages", () => {
+    expect(indexBlogs({ blogs, blogsPerPage: 10 }).length).toBe(10);
   });
+  test("Maps out the page numbers correctly", () => {
+    expect(
+      indexBlogs({ blogs, blogsPerPage: 10 }).map((el) => el.pageNumber)
+    ).toStrictEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  });
+  test("Can render the correct footer for each index", () => {});
+});
+
+describe("File system interactions", () => {
   test("We can find all the blogs in our mock project", async () => {
     expect(blogs.length).toEqual(1000);
   });
