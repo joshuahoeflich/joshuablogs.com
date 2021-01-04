@@ -118,3 +118,6 @@ dist
 # Testing files for our blog generator
 build/bundle/src/big-blog
 build/bundle/example-blog
+
+# Watch mode tools
+.wrc

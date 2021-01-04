@@ -29,7 +29,7 @@ const getPrefix = (num: number): string => {
 };
 
 const createFakeBlogEntry = async (_: unknown, index: number, __: Array<unknown>) => {
-  const fileName = `${getPrefix(index)}-${faker.lorem.slug()}`;
+  const fileName = `${getPrefix(index)}-${faker.lorem.slug()}.md`;
   await fs.writeFile(path.join(FAKE_BLOG_PATH, fileName), createFakeMarkdown());
 };
 

@@ -4,8 +4,7 @@
   "description": "Bundles all of the HTML, CSS, and JavaScript for me.",
   "scripts": {
     "build": "tsc",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "test": "jest"
   },
   "keywords": [],
   "author": "Joshua Hoeflich",

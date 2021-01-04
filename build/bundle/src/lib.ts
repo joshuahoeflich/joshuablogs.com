@@ -3,30 +3,11 @@ import path from "path";
 import MarkdownIt from "markdown-it";
 import meta from "markdown-it-meta";
 
-export const PROJECT_ROOT = path.resolve(
-  path.join(__dirname, "..", "..", "..")
-);
-
 export interface MarkdownContent {
   description: string;
   title: string;
   content: string;
 }
-
-const makeMarkdownExtractor = () => {
-  const md: any = new MarkdownIt();
-  md.use(meta);
-  const extractMarkdownContents = (markdown: string): MarkdownContent => {
-    const content = md.render(markdown);
-    return {
-      ...md.meta,
-      content,
-    };
-  };
-  return extractMarkdownContents;
-};
-
-export const extractMarkdownContents = makeMarkdownExtractor();
 
 export interface NavLink {
   slug: string;
@@ -40,16 +21,36 @@ export interface BlogMeta {
 
 export type BlogContext = BlogMeta & MarkdownContent;
 
-export const getBlogSlug = (filePath: string): string =>
-  `/${path.parse(filePath.slice(filePath.indexOf("-") + 1)).name}`
+export const PROJECT_ROOT = path.resolve(
+  path.join(__dirname, "..", "..", "..")
+);
 
-const getNavLink = (index: number, blogArray: MarkdownContent[], pathArray: string[]): null | NavLink => {
-  if (index >= blogArray.length || index < 0) return null;
+export const extractMarkdownContents = (markdown: string): MarkdownContent => {
+  const md: any = new MarkdownIt().use(meta);
+  const content = md.render(markdown);
   return {
-    slug: getBlogSlug(path.parse(pathArray[index]).name),
-    title: blogArray[index].title,
-  }
-}
+    ...md.meta,
+    content,
+  };
+};
+
+export const getBlogSlug = (filePath: string): string =>
+  `/${path.parse(filePath.slice(filePath.indexOf("-") + 1)).name}`;
+
+const indexInBounds = <T>(index: number, array: Array<T>): boolean =>
+  index >= 0 && index < array.length;
+
+const getNavLink = (
+  index: number,
+  blogArray: MarkdownContent[],
+  pathArray: string[]
+): null | NavLink =>
+  indexInBounds(index, blogArray)
+    ? {
+        slug: getBlogSlug(path.parse(pathArray[index]).name),
+        title: blogArray[index].title,
+      }
+    : null;
 
 export const getBlogContexts = async (
   blogPath: string
@@ -66,48 +67,60 @@ export const getBlogContexts = async (
   return blogPosts.map((el, index) => ({
     ...el,
     previous: getNavLink(index - 1, blogPosts, blogPaths),
-    next: getNavLink(index + 1, blogPosts, blogPaths)
+    next: getNavLink(index + 1, blogPosts, blogPaths),
   }));
 };
 
-// const getNavFooter = (blogContext: BlogContext): string => {
-//   return `${blogContext.previous ?  : ''}<a href="/">🏠 Home</a>${}`
-// }
+export const getNavFooter = (blogContext: BlogContext): string => {
+  const previous = blogContext.previous
+    ? `<a href="${blogContext.previous.slug}">👈 ${blogContext.previous.title}</a>`
+    : "";
+  const next = blogContext.next
+    ? `<a href="${blogContext.next.slug}">👉 ${blogContext.next.title}</a>` 
+    : "";
+  return `${previous}<a href="/">🏠 Home</a>${next}`;
+};
 
-// export const renderBlog = (blogContext: BlogContext): string => {
-//   return `
-// <!DOCTYPE html>
-// <html lang="en">
-//   <head>
-//     <meta charset="UTF-8" />
-//     <meta name="viewport" content="width=device-width,initial-scale=1" />
-//     <meta name="description" content="Joshua Hoeflich's blog." />
-//     <link
-//       rel="preload"
-//       crossorigin="anonymous"
-//       href="/styles/roboto.woff"
-//       as="font"
-//     />
-//     <link
-//       rel="preload"
-//       crossorigin="anonymous"
-//       href="/styles/roboto-slab.woff"
-//       as="font"
-//     />
-//     <link rel="preload" href="/styles/style.css" as="style" />
-//     <title>Joshua Blogs | ${blogContext.title}</title>
-//     <link rel="stylesheet" href="/styles/style.css" />
-//   </head>
-//   <body>
-//     <div class="page-container">
-//       <div class="card" id="blog-post">
-//         ${blogContext.content}
-//       </div>
-//       <div id="nav" class="card">
-//         ${getNavFooter(blogContext)}
-//       </div>
-//     </div>
-//   </body>
-// </html>
-//   `;
-// }
+export const renderBlog = (blogContext: BlogContext): string => {
+  return `
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="Joshua Hoeflich's blog." />
+    <link
+      rel="preload"
+      crossorigin="anonymous"
+      href="/styles/roboto.woff"
+      as="font"
+    />
+    <link
+      rel="preload"
+      crossorigin="anonymous"
+      href="/styles/roboto-slab.woff"
+      as="font"
+    />
+    <link rel="preload" href="/styles/style.css" as="style" />
+    <title>Joshua Blogs | ${blogContext.title}</title>
+    <link rel="stylesheet" href="/styles/style.css" />
+  </head>
+  <body>
+    <div class="page-container">
+      <div class="card" id="blog-post">
+        ${blogContext.content}
+      </div>
+      <div id="nav" class="card">
+        ${getNavFooter(blogContext)}
+      </div>
+    </div>
+  </body>
+</html>
+  `;
+}
+
+export const writeBlogHtml = async (blogPath: string): Promise<void> => {
+  const blogContexts = await getBlogContexts(blogPath);
+  blogContexts.map(renderBlog);
+  console.log(blogContexts);
+}

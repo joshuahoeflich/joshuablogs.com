@@ -6,11 +6,48 @@ import {
   PROJECT_ROOT,
   BlogContext,
   getBlogSlug,
+  getNavFooter,
 } from "./lib";
 
 describe("Project root", () => {
   test("Points to the right directory", () => {
     expect(fs.readdirSync(PROJECT_ROOT).includes(".gitignore")).toBe(true);
+  });
+});
+
+describe("Rendering the footer", () => {
+  test("Works when no previous", () => {
+    expect(
+      getNavFooter({
+        description: "",
+        title: "",
+        content: "",
+        previous: null,
+        next: { title: "Hello!", slug: "/hello" },
+      })
+    ).toEqual('<a href="/">🏠 Home</a><a href="/hello">👉 Hello!</a>');
+  });
+  test("Works when no next", () => {
+    expect(
+      getNavFooter({
+        description: "",
+        title: "",
+        content: "",
+        previous: { title: "Goodbye!", slug: "/goodbye"   },
+        next: null,
+      })
+    ).toEqual('<a href="/goodbye">👈 Goodbye!</a><a href="/">🏠 Home</a>');
+  });
+  test("Works when previous and next both exist", () => {
+    expect(
+      getNavFooter({
+        description: "",
+        title: "",
+        content: "",
+        previous: { title: "Goodbye!", slug: "/goodbye"   },
+        next: { title: "Hello!", slug: "/hello" },
+      })
+    ).toEqual('<a href="/goodbye">👈 Goodbye!</a><a href="/">🏠 Home</a><a href="/hello">👉 Hello!</a>');
   });
 });
 
