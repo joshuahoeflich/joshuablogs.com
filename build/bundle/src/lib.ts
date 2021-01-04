@@ -200,8 +200,8 @@ export const getBlogContexts = async (
 
 export const indexBlogs = (config: BlogIndexConfig): Array<IndexContext> => {
   const { blogs, blogsPerPage } = config;
-  const numPages = blogs.length;
-  return Array.from({ length: blogsPerPage })
+  const numPages = blogs.length / blogsPerPage 
+  return Array.from({ length: numPages })
     .map((_, i) => {
       const start = i * blogsPerPage;
       return blogs.slice(start, start + blogsPerPage);

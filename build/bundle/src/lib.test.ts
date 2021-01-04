@@ -102,12 +102,14 @@ this is a markdown document
 
 describe("Indexing pages", () => {
   test("Can get an array of the right pages", () => {
-    expect(indexBlogs({ blogs, blogsPerPage: 10 }).length).toBe(10);
+    expect(indexBlogs({ blogs, blogsPerPage: 10 }).length).toEqual(
+      blogs.length / 10
+    );
   });
   test("Maps out the page numbers correctly", () => {
     expect(
       indexBlogs({ blogs, blogsPerPage: 10 }).map((el) => el.pageNumber)
-    ).toStrictEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    ).toStrictEqual(Array.from({ length: 100 }).map((_, i) => i + 1));
   });
   test("Renders the first blog card correctly", () => {
     expect(
