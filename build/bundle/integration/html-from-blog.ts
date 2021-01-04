@@ -1,15 +1,16 @@
 import path from "path";
 import ora from "ora";
 import createFakeBlog from "./create-fake-blog";
-import { writeBlogHtml } from "../src/lib";
+import { generateBlog, PROJECT_ROOT } from "../src/lib";
 
 const main = async () => {
   const spinner = ora("Beginning to create HTML...").start();
   try {
     await createFakeBlog();
-    await writeBlogHtml({
+    await generateBlog({
       blogPath: path.resolve(path.join(__dirname, "example-blog")),
       htmlPath: path.resolve(path.join(__dirname, "example-html")),
+      staticFilePath: path.join(PROJECT_ROOT, 'build', 'static-pages')
     });
     spinner.succeed('HTML Creation successful.');
   } catch (err) {

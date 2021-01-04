@@ -1,4 +1,4 @@
-import fs, { mkdirp, remove } from "fs-extra";
+import fs, { mkdirp, remove, copy } from "fs-extra";
 import path from "path";
 import MarkdownIt from "markdown-it";
 import meta from "markdown-it-meta";
@@ -37,6 +37,17 @@ export interface IndexContext {
 export interface HtmlOutput {
   blogPath: string;
   htmlPath: string;
+}
+
+export interface StaticFileConfig {
+  htmlPath: string;
+  staticFilePath: string;
+}
+
+export interface BlogConfig {
+  blogPath: string;
+  htmlPath: string;
+  staticFilePath: string;
 }
 
 export interface BlogIndexConfig {
@@ -159,7 +170,9 @@ export const renderBlogIndex = (ctx: IndexContext): string => {
   <body>
     <div class="page-container">
       ${ctx.blogs.map(renderBlogCard).join("\n")}
-      ${renderIndexFooter(ctx)}
+      <div id="nav" class="card">
+        ${renderIndexFooter(ctx)}
+      </div>
     </div>
   </body>
   `;
@@ -200,7 +213,7 @@ export const getBlogContexts = async (
 
 export const indexBlogs = (config: BlogIndexConfig): Array<IndexContext> => {
   const { blogs, blogsPerPage } = config;
-  const numPages = blogs.length / blogsPerPage 
+  const numPages = blogs.length / blogsPerPage;
   return Array.from({ length: numPages })
     .map((_, i) => {
       const start = i * blogsPerPage;
@@ -248,6 +261,19 @@ export const writeBlogIndexes = (
   });
 };
 
+export const copyStaticFiles = async (
+  config: StaticFileConfig
+): Promise<void[]> => {
+  const { staticFilePath, htmlPath } = config;
+  const filePaths = await fs.promises.readdir(staticFilePath);
+  return Promise.all(
+    filePaths.map((filePath) => {
+      const absPath = path.resolve(path.join(staticFilePath, filePath));
+      return copy(absPath, path.resolve(path.join(htmlPath, filePath)));
+    })
+  );
+};
+
 export const writeBlogHtml = async (htmlOutput: HtmlOutput): Promise<void> => {
   await remove(htmlOutput.htmlPath);
   const blogContexts = await getBlogContexts(htmlOutput.blogPath);
@@ -256,3 +282,8 @@ export const writeBlogHtml = async (htmlOutput: HtmlOutput): Promise<void> => {
     ...writeBlogIndexes(htmlOutput.htmlPath, blogContexts),
   ]);
 };
+
+export const generateBlog = async (config: BlogConfig) => {
+  await writeBlogHtml(config);
+  await copyStaticFiles(config);
+}
