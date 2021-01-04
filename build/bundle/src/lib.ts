@@ -115,7 +115,7 @@ export const renderBlogPost = (blogContext: BlogContext): string => {
       <div class="card" id="blog-post">
         ${blogContext.content}
       </div>
-      <div id="nav" class="card">
+      <div class="card" id="nav">
         ${renderPostFooter(blogContext)}
       </div>
     </div>
@@ -213,7 +213,7 @@ export const getBlogContexts = async (
 
 export const indexBlogs = (config: BlogIndexConfig): Array<IndexContext> => {
   const { blogs, blogsPerPage } = config;
-  const numPages = blogs.length / blogsPerPage;
+  const numPages = Math.ceil(blogs.length / blogsPerPage);
   return Array.from({ length: numPages })
     .map((_, i) => {
       const start = i * blogsPerPage;

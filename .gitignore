@@ -119,5 +119,8 @@ dist
 build/bundle/integration/example-blog
 build/bundle/integration/example-html
 
+# Compilation results
+dist/
+
 # Watch mode tools
 .wrc

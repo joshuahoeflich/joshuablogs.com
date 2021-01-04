@@ -387,10 +387,6 @@ p {
 }
 /* }}}*/
 
-#about {
-  background-color: #dbc8ff;
-}
-
 #nav {
   display: flex;
   justify-content: center;
@@ -402,6 +398,10 @@ p {
   padding-right: 16px;
   text-align: center;
   font-family: roboto;
+}
+
+#blog-post {
+  max-width: 800px;
 }
 
 .toolbar > a {
