@@ -1,5 +1,5 @@
 ---
-title: JavaScript Boolean Gotchas
+title: JavaScript Gotchas
 description: Checking conditions inside `if` statements explicitly in JavaScript helps prevent extremely confusing bugs. I've been bitten by issues involving truthiness and falsiness more times than I'd like to admit; explicit checks for specific conditions tend to be much easier to think about.
 ---
 

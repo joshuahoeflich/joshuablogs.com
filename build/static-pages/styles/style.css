@@ -64,7 +64,11 @@ hr {
 
 pre {
   font-family: monospace, monospace; /* 1 */
-  font-size: 1em; /* 2 */
+  white-space: pre-wrap; /* css-3 */
+  white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+  white-space: -pre-wrap; /* Opera 4-6 */
+  white-space: -o-pre-wrap; /* Opera 7 */
+  word-wrap: break-word;
 }
 
 /* Text-level semantics
@@ -107,7 +111,7 @@ code,
 kbd,
 samp {
   font-family: monospace, monospace; /* 1 */
-  font-size: 1em; /* 2 */
+  font-size: 12pt; /* 2 */
 }
 
 /**
@@ -434,7 +438,7 @@ p {
   padding: 16px;
 }
 
-.card > h1 {
+.card > .page-link > h1, .card > h1 {
   text-align: center;
   font-size: 30pt;
   padding-bottom: 8px;
@@ -446,6 +450,7 @@ p {
 }
 
 .card > p,
+li,
 a {
   font-size: 14pt;
 }
