@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Heading, Text, Button, Spinner } from "@chakra-ui/react";
+import { Flex, Heading, Text, Button, Spinner, Link } from "@chakra-ui/react";
 import { GiCardJoker } from "react-icons/gi";
 import axios from "axios";
 import { useQuery } from "react-query";
@@ -22,29 +22,47 @@ const fetchJoke = async (): Promise<ApiJoke> => {
   return data;
 };
 
-const CardShell: React.FC<OnlyChildren> = (props) => {
+const PageShell: React.FC<OnlyChildren> = (props) => (
+  <Flex
+    backgroundColor="lightblue"
+    width="100%"
+    alignItems="center"
+    flexDirection="column"
+    padding="32px"
+  >
+    {props.children}
+  </Flex>
+);
+
+const JokeShell: React.FC<OnlyChildren> = (props) => {
   return (
     <Flex
-      backgroundColor="lightblue"
-      height="100vh"
-      width="100%"
-      alignItems="center"
+      minWidth={["0px", "0px", "800px", "800px"]}
       flexDirection="column"
+      backgroundColor="white"
+      boxShadow="3px 3px 10px grey"
+      alignItems="center"
       padding="32px"
+      marginBottom="32px"
     >
-      <Flex
-        minWidth={["0px", "0px", "800px", "800px"]}
-        flexDirection="column"
-        backgroundColor="white"
-        boxShadow="3px 3px 10px grey"
-        alignItems="center"
-        padding="32px"
-      >
-        <Heading color="black" pb="16px">
-          Joke Generator
-        </Heading>
-        {props.children}
-      </Flex>
+      <Heading color="black" pb="16px">
+        Joke Generator
+      </Heading>
+      {props.children}
+    </Flex>
+  );
+};
+
+const NavShell: React.FC<OnlyChildren> = (props) => {
+  return (
+    <Flex
+      minWidth={["0px", "0px", "600px", "600px"]}
+      backgroundColor="white"
+      boxShadow="3px 3px 10px grey"
+      padding="32px"
+      justifyContent="center"
+    >
+      {props.children}
     </Flex>
   );
 };
@@ -98,9 +116,19 @@ const JokeController = () => {
 };
 
 const App = () => (
-  <CardShell>
-    <JokeController />
-  </CardShell>
+  <PageShell>
+    <JokeShell>
+      <JokeController />
+    </JokeShell>
+    <NavShell>
+      <Link p="8px" fontSize="14pt" href="/">
+        🏠 Home
+      </Link>
+      <Link p="8px" fontSize="14pt" href="/apps">
+        🎈 Apps
+      </Link>
+    </NavShell>
+  </PageShell>
 );
 
 export default App;
