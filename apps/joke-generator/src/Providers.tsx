@@ -9,13 +9,6 @@ interface ProviderProps {
 }
 
 const theme = extendTheme({
-  styles: {
-    global: {
-      body: {
-        backgroundColor: 'lightblue',
-      }
-    }
-  },
   fonts: {
     body: "roboto",
     heading: "Roboto Slab",

@@ -26,6 +26,7 @@ const PageShell: React.FC<OnlyChildren> = (props) => (
   <Flex
     backgroundColor="lightblue"
     width="100%"
+    height="100vh"
     alignItems="center"
     flexDirection="column"
     padding="32px"
@@ -59,7 +60,7 @@ const NavShell: React.FC<OnlyChildren> = (props) => {
       minWidth={["0px", "0px", "600px", "600px"]}
       backgroundColor="white"
       boxShadow="3px 3px 10px grey"
-      padding="32px"
+      padding="16px"
       justifyContent="center"
     >
       {props.children}
