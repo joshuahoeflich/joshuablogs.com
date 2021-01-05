@@ -125,3 +125,8 @@ dist/
 # Watch mode tools
 .wrc
 .list-blog
+
+# App build files (except for index.html)
+apps/apps
+!apps/apps/index.html
+!apps/apps/app-index.css
