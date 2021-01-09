@@ -1,11 +1,11 @@
 ---
 title: Towards a Simpler Web
-description: When building this website, I decided to roll my own static site generator. Using TypeScript, I wrote a 300 line program to compile some Markdown files and a few hand-hacked static assets into a series of directories and HTML files that any server could potentially host. The "apps" page exists to host projects written in JavaScript or various other languages that compile into it, but this blog section doesn't use it at all. All I needed was the bricks of the web, and maybe that's all you need, too.
+description: When building this website, I decided to roll my own static site generator. Using TypeScript, I wrote a 300 line program to compile some Markdown files and a few hand-hacked static assets into a series of directories and HTML files that any server could potentially host. The "apps" page exists to host projects written in JavaScript or various other languages that compile into it, but this blog section doesn't use any scripts. All I needed was the bricks of the web, and maybe that's all you need, too.
 ---
 
 # Towards a Simpler Web
 
-When building this website, I decided to roll my own static site generator. Using TypeScript, I wrote a 300 line program to compile some Markdown files and a few hand-hacked static assets into a series of directories and HTML files that any server could potentially host. The "apps" page exists to host projects written in JavaScript or various other languages that compile into it; however, this blog section doesn't use that language at all. All I needed was the bricks of the web, and maybe that's all you need too.
+When building this website, I decided to roll my own static site generator. Using TypeScript, I wrote a 300 line program to compile some Markdown files and a few hand-hacked static assets into a series of directories and HTML files that any server could potentially host. The "apps" page exists to host projects written in JavaScript or various other languages that compile into it, but this blog section doesn't use any scripts. All I needed was the bricks of the web, and maybe that's all you need, too.
 
 Don't get me wrong: Modern web tooling solves an enormous number of problems. Libraries like React and languages like TypeScript, ClojureScript, and Elm make working on large applications joyous, and I'm vastly grateful for all of the hard work that developers put into them. With that said, those technologies come with a great deal of complexity that does not befit every problem.
 
