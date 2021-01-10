@@ -130,3 +130,4 @@ dist/
 apps/apps
 !apps/apps/index.html
 !apps/apps/app-index.css
+apps/game-of-life/public/js
