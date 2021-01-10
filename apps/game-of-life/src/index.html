@@ -4,23 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="description" content="Joshua Hoeflich's blog." />
+    <link rel="preload" crossorigin="anonymous" href="arvo.woff" as="font" />
     <link
       rel="preload"
       crossorigin="anonymous"
-      href="/styles/roboto.woff"
-      as="font"
-    />
-    <link
-      rel="preload"
-      crossorigin="anonymous"
-      href="/styles/roboto-slab.woff"
+      href="montserrat.woff"
       as="font"
     />
     <link rel="stylesheet" href="life-index.css" />
     <title>Game of Life</title>
   </head>
   <body>
-    <canvas id="game-display"></canvas>
+    <div id="page-container">
+      <h1>Hello</h1>
+      <p>hi</p>
+      <p>Live update</p>
+      <canvas id="game-display"></canvas>
+    </div>
   </body>
-  <script defer src="index.js"></script>
+  <script defer type="module" src="life.js"></script>
 </html>

@@ -358,14 +358,14 @@ template {
 
 /* fonts  {{{*/
 @font-face {
-  font-family: roboto-slab;
-  src: url("/styles/roboto-slab.woff");
+  font-family: montserrat;
+  src: url("montserrat.woff");
   font-display: swap;
 }
 
 @font-face {
-  font-family: roboto;
-  src: url("/styles/roboto.woff");
+  font-family: arvo;
+  src: url("arvo.woff");
   font-display: swap;
 }
 /*}}}*/
@@ -381,12 +381,12 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: roboto-slab;
+  font-family: montserrat;
   margin: 0;
 }
 
 p {
-  font-family: roboto;
+  font-family: arvo;
   line-height: 1.35em;
 }
 /* }}}*/
