@@ -10,4 +10,8 @@
  :builds
  {:frontend 
   {:target :browser
-   :modules {:main {:init-fn life.frontend.app/init}}}}}
+   :modules {:main {:init-fn life.frontend.app/init}}}
+  :test
+   {:target    :node-test
+    :main       life.frontend.test/init
+    :output-to "out/node-tests.js"}}}
