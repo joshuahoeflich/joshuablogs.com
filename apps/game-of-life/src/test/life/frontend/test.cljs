@@ -38,5 +38,18 @@
                {:row 1 :col 2}}]
     (is (= board (tick (tick board))))))
 
+(deftest glider
+  (let [board #{{:row 0 :col 1}
+               {:row 1 :col 2}
+               {:row 2 :col 0}
+               {:row 2 :col 1}
+               {:row 2 :col 2}}]
+    (is (= (tick board)
+           #{{:row 1 :col 0}
+            {:row 1 :col 2}
+            {:row 2 :col 1}
+            {:row 2 :col 2}
+            {:row 3 :col 1}}))))
+
 (defn init []
   (run-tests))

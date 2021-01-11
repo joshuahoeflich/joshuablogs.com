@@ -12,18 +12,12 @@
      {:row (dec row) :col (inc col)}]))
 
 (defn tick [board]
-  (let [cells (distinct (mapcat neighbors board))
-        is-living? (partial contains? board)
-        is-dead? (complement is-living?)
-        live-neighbors (fn [cell] (count (filter is-living? (neighbors cell))))
-        in-new-board?
-        (fn [cell]
-          (let [neighbor-count (live-neighbors cell)]
-            (if (is-living? cell)
-              (or (= neighbor-count 2) (= neighbor-count 3))
-              (= neighbor-count 3))))
-        ]
-    (into #{} (filter in-new-board? cells))))
+  (letfn [(alive? [cell] (contains? board cell))
+          (in-new-board? [cell]
+            (let [neighbor-count (count (filter alive? (neighbors cell)))]
+              (or (= neighbor-count 3)
+                  (and (alive? cell) (= neighbor-count 2)))))]
+    (into #{} (filter in-new-board? (distinct (mapcat neighbors board))))))
 
 (defn init []
   (let [board #{{:x 3 :y 4}}]
