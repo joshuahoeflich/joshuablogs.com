@@ -1,5 +1,7 @@
 (ns life.frontend.app)
 
+(def canvas (atom (js/document.getElementById "game")))
+
 (defn neighbors [cell]
   (let [{row :row col :col} cell]
     [{:row (inc row) :col       col}

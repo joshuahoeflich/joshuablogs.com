@@ -12,6 +12,9 @@
   {:target :browser
    :modules {:main {:init-fn life.frontend.app/init}}}
   :test
-   {:target    :node-test
-    :main       life.frontend.test/init
+   {:target    :browser-test
+    :test-dir  "out"
+    :ns-regexp "-test$"
+    :devtools   {:http-port 1337
+                 :http-root "out"}
     :output-to "out/node-tests.js"}}}

@@ -5,8 +5,7 @@
   "scripts": {
     "build": "shadow-cljs compile frontend",
     "start": "concurrently \"shadow-cljs watch frontend\" \"live-server public\"",
-    "test": "shadow-cljs compile test && node out/node-tests.js",
-    "test:watch": "concurrently \"shadow-cljs watch test\" \"nodemon --watch out out/node-tests.js\""
+    "test": "shadow-cljs watch test"
   },
   "devDependencies": {
     "concurrently": "^5.3.0",

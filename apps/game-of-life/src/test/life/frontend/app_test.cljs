@@ -1,4 +1,4 @@
-(ns life.frontend.test
+(ns life.frontend.app-test
   (:require
    [life.frontend.app :refer [tick neighbors]]
    [clojure.test :refer [deftest is run-tests]]))
@@ -51,5 +51,11 @@
             {:row 2 :col 2}
             {:row 3 :col 1}}))))
 
-(defn init []
+(defn start []
   (run-tests))
+
+(defn stop [done]
+  (done))
+
+(defn ^:export init []
+  (start))
