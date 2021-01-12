@@ -13,8 +13,11 @@
    :modules {:main {:init-fn life.frontend.app/init}}}
   :test
    {:target    :browser-test
-    :test-dir  "out"
+    :test-dir  "dev"
     :ns-regexp "-test$"
     :devtools   {:http-port 1337
-                 :http-root "out"}
-    :output-to "out/node-tests.js"}}}
+                 :http-root "dev"}
+    :output-to "dev/node-tests.js"}
+   :ci
+   {:target :karma
+    :output-to "ci/ci.js"}}}

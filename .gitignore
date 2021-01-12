@@ -131,3 +131,5 @@ apps/apps
 !apps/apps/index.html
 !apps/apps/app-index.css
 apps/game-of-life/public/js
+apps/game-of-life/ci
+apps/game-of-life/dev
