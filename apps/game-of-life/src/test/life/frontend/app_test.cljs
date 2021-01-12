@@ -1,6 +1,6 @@
 (ns life.frontend.app-test
   (:require
-   [life.frontend.app :refer [tick neighbors]]
+   [life.frontend.app :refer [tick neighbors extract-grid]]
    [clojure.test :refer [deftest is run-tests]]))
 
 (deftest root-neighbors
@@ -51,11 +51,17 @@
             {:row 2 :col 2}
             {:row 3 :col 1}}))))
 
-(defn start []
-  (run-tests))
+(defn add-canvas-to-doc! []
+  "Create a canvas for the tests."
+  (let [canvas (js/document.createElement "canvas")
+        body (js/document.querySelector "body")]
+    (.appendChild body canvas)
+    (set! canvas.width 100)
+    (set! canvas.height 100)
+    (set! canvas.id "game")))
 
-(defn stop [done]
-  (done))
+(add-canvas-to-doc!)
 
-(defn ^:export init []
-  (start))
+(deftest grid-dimensions
+  (is (= 100
+         (:width (extract-grid (js/document.getElementById "game"))))))

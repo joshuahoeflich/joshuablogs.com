@@ -1,7 +1,5 @@
 (ns life.frontend.app)
 
-(def canvas (atom (js/document.getElementById "game")))
-
 (defn neighbors [cell]
   (let [{row :row col :col} cell]
     [{:row (inc row) :col       col}
@@ -21,9 +19,8 @@
                   (and (alive? cell) (= neighbor-count 2)))))]
     (into #{} (filter in-new-board? (distinct (mapcat neighbors board))))))
 
-(defn init []
-  (let [board #{{:x 3 :y 4}}]
-    (println (contains? board {:x 3 :y 4}))
-    (println (contains? board {:x 3 :y 5}))
-    (println (conj board {:x 3 :y 4}))
-    (println (conj board {:x 3 :y 5}))))
+(defn extract-grid [canvas]
+  {:width canvas.width
+   :height canvas.height})
+
+(defn init [] nil)
