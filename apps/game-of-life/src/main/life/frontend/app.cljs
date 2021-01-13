@@ -16,7 +16,7 @@
           (in-new-board? [cell]
             (let [neighbor-count (count (filter alive? (neighbors cell)))]
               (or (= neighbor-count 3)
-                  (and (alive? cell) (= neighbor-count 2)))))]
+                  (and (= neighbor-count 2) (alive? cell)))))]
     (into #{} (filter in-new-board? (distinct (mapcat neighbors board))))))
 
 (defn extract-grid [canvas]
