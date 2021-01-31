@@ -8,7 +8,13 @@ If you've programmed before, you're probably familiar with the notion of _types_
 - Booleans
 - etc.
 
-Some types are composed out of other types. For example, we might have an array of numbers, a hash table mapping strings to booleans, or a function that turns numbers into arrays of characters. If you find any of those ideas confusing, you might want to learn a bit more about programming before reading on.
+Some types are composed out of other types. For example, we might have:
+
+- An array of numbers (like `Array<number>`),
+- A hash map from strings to booleans (like `Map<string, boolean>`)
+- A function that turns numbers into an array of strings (like `(...args: Array<number>) => Array<string>`);
+
+If you find any of those ideas confusing, you might want to learn a bit more about programming before reading on.
 
 Question: How do we _classify_ different types? We can imagine plenty of different ways, but here, we're going to do it by _looking at the functions which they support._ That idea is so critical that I'll repeat it for emphasis:
 
